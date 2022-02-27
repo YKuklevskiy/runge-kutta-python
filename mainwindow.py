@@ -1,7 +1,6 @@
 from tkinter import *
 from tkinter import messagebox
 import evaluation
-import matplotlib.pyplot as plt
 
 # Настройка окна
 window = Tk()
@@ -71,7 +70,8 @@ def plot():
             return
 
     x_list, y_list = evaluation.evaluate(*list(map(float, params))) # делаем расчеты
-    evaluation.print_table_console(x_list, y_list)
+    #evaluation.print_table_console(x_list, y_list) # для отладки программы
+    evaluation.plot_graph(x_list, y_list)
 
 # кнопка для решения задачи
 solve_button = Button(window, text='Генерировать решение', command=plot)

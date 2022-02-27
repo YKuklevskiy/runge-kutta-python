@@ -1,5 +1,4 @@
 import types
-import numpy as np
 
 # имеем уравнение вида y'=f(x,y)
 

@@ -1,6 +1,8 @@
 from typing import List
 import runge_kutta_functions as rgkt
 import math
+import numpy as np
+import matplotlib.pyplot as plt
 
 # Вариант-18
 def function_18(x, y):
@@ -18,6 +20,20 @@ def evaluate(x_0: float, x_n: float, y_0: float, h: float) -> List[List[float]]:
         x.append(x_i)
 
     return x, y
+
+def plot_graph(x: List[float], y: List[float]):
+    plt.close('all') # закрываем ранее открытые графики
+
+    x_range = np.array(x, np.float64)
+    y_values = np.array(y, np.float64)
+
+    plt.figure(num="y' = f(x, y), y(x0)=y0")
+    plt.title("y=y(x)")
+    plt.xlabel("x")
+    plt.ylabel("y(x)")
+    plt.grid()
+    plt.plot(x_range, y_values)
+    plt.show()
 
 def print_table_console(x: List[float], y: List[float]):
     for i in range(len(x)):
