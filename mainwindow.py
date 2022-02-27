@@ -1,5 +1,7 @@
 from tkinter import *
 from tkinter import messagebox
+
+from matplotlib.pyplot import table
 import evaluation
 
 # Настройка окна
@@ -69,10 +71,9 @@ def plot():
             messagebox.showerror("Ошибка", "Введенные данные неверны.")
             return
 
-    x_list, y_list = evaluation.evaluate(*list(map(float, params))) # делаем расчеты
-    #evaluation.print_table_console(x_list, y_list) # для отладки программы
-    evaluation.plot_graph(x_list, y_list)
-
+    calculated_data = evaluation.evaluate(*list(map(float, params))) # делаем расчеты
+    evaluation.plot_window(calculated_data)
+    
 # кнопка для решения задачи
 solve_button = Button(window, text='Генерировать решение', command=plot)
 
