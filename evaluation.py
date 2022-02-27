@@ -22,7 +22,7 @@ def evaluate(x_0: float, x_n: float, y_0: float, h: float) -> List[List[float]]:
     delta = [0]
     x_i = x_0
     
-    while(x_i < x_n):
+    while x_i < x_n and not math.isclose(x_i, x_n):
         approximated_y = rgkt.calculate_next_y(x_i, y[-1], h, function_18)
         x_i += h
         real_y = analytic_solution(x_i, x_0, y_0)
@@ -53,7 +53,7 @@ def save_table(data: List[List[float]]):
     data = np.array(data).T.round(6).tolist()
     column_names = ('xᵢ', 'yᵢ', 'Погрешность численного решения')
 
-    table_file = open('solution.csv', mode='w')
+    table_file = open('solution.csv', mode='w', newline='')
     table_writer = csv.writer(table_file, delimiter=',', quotechar = '"')
     table_writer.writerow(column_names)
     table_writer.writerows(data)
