@@ -10,5 +10,5 @@ def calculate_next_y(x_i: float, y_i: float, h: float, function: types.FunctionT
     k3 = function(x_i+h/2, y_i+h/2*k2)
     k4 = function(x_i+h, y_i+h*k3)
 
-    y_i_plus_1 = y_i + h*(k1+2*k2+2*k3+k4)/6.0
+    y_i_plus_1 = y_i + h*(k1+2*k2+2*k3+k4)/6.0 # основная формула
     return y_i_plus_1
