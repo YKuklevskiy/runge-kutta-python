@@ -14,13 +14,14 @@ def function_18(x, y):
 def analytic_solution(x: float, x_0: float, y_0: float) -> float:
     # y = x*ln(ln(|x|))+C*x
     C = float(y_0)/x_0 - math.log(math.log(abs(x_0))) # находим С, удовл. нач. условию
-    return float(x_0)*math.log(math.log(abs(x)))+C*x
+    return float(x)*math.log(math.log(abs(x)))+C*x
 
 # функция вычисляющая таблицу всех значений, требующихся в задаче и возвращающая ее
 def evaluate(x_0: float, x_n: float, y_0: float, h: float, eps = -1) -> List[List[float]]:
     # Первые значения нам известны до начала вычислений
     x = [x_0]
     y = [y_0]
+    precise_y = [y_0]
     delta = [0]
     x_i = x_0
     
@@ -41,15 +42,17 @@ def evaluate(x_0: float, x_n: float, y_0: float, h: float, eps = -1) -> List[Lis
         real_y = analytic_solution(x_i, x_0, y_0)
         y.append(approximated_y)
         x.append(x_i)
+        precise_y.append(real_y)
         delta.append(abs(real_y-approximated_y))
     
-    return [x, y, delta]
+    return [x, y, precise_y, delta]
 
 def plot_window(data: List[List[float]]):
     plt.close('all') # закрываем ранее открытые графики
 
     x_range = np.array(data[0], np.float64)
     y_values = np.array(data[1], np.float64)
+    y_precise_values = np.array(data[2], np.float64)
 
     plt.figure(num="y' = f(x, y), y(x0)=y0")
     plt.title("y=y(x)")
@@ -57,14 +60,20 @@ def plot_window(data: List[List[float]]):
     plt.ylabel("y(x)")
     plt.grid()
     plt.plot(x_range, y_values)
+    plt.plot(x_range, y_precise_values)
     plt.scatter(x_range, y_values, s=4) # для точек в месте вычисленных значений
     save_table(data)
     plt.show()
 
 def save_table(data: List[List[float]]):
+    preciseness_data = data[3] # потом припишем погрешность ее к транспонированному массиву с округленными данными
+    data.pop()
+
     # т.к. data приходит в "горизонтальном, а не вертикальном виде", транспонируем массивы
-    data = np.array(data).T.round(6).tolist()
-    column_names = ('xᵢ', 'yᵢ', 'Погрешность численного решения')
+    values_data = np.array(data).T.round(6)
+
+    data = np.concatenate((values_data, np.array(preciseness_data).T[:, None]), axis=1).tolist()
+    column_names = ('xᵢ', 'yᵢ', 'yᵢ полученное аналитически', 'Погрешность численного решения')
 
     table_file = open('solution.csv', mode='w', newline='', encoding="utf-8")
     table_writer = csv.writer(table_file, delimiter=',', quotechar = '"')
