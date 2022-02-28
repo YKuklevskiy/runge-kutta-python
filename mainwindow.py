@@ -106,7 +106,10 @@ def plot():
             return
 
     calculated_data = evaluation.evaluate(*list(map(float, params))) # делаем расчеты
-    evaluation.plot_window(calculated_data)
+    if calculated_data != None:
+        evaluation.plot_window(calculated_data)
+    else:
+        messagebox.showerror("Ошибка", "Ошибка в вычислениях. Пожалуйста, проверьте вводные данные на корректность.")
     
 
 # кнопка для решения задачи
