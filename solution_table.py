@@ -34,6 +34,7 @@ def open_table():
     # слайдеры для прокрутки таблицы
     x_scroll_bar = Scrollbar(table_window, orient='horizontal', command=value_table.xview)
     y_scroll_bar = Scrollbar(table_window, orient='vertical', command=value_table.yview)
+    value_table.configure(xscrollcommand=x_scroll_bar.set, yscrollcommand=y_scroll_bar.set)
     
     value_table.grid(row=0, column=0, sticky=N+E+W+S)
     y_scroll_bar.grid(row=0, column=1, sticky=N+S)
