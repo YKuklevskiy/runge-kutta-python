@@ -1,12 +1,11 @@
 from tkinter import *
 from tkinter import messagebox
-from matplotlib.pyplot import table
 import evaluation
 
 # Настройка окна
 window = Tk()
 window.title('Решение дифференциального уравнения методом Рунге-Кутта')
-screen_size = [window.winfo_screenwidth(), window.winfo_screenheight()] # половина размера экрана
+screen_size = [window.winfo_screenwidth(), window.winfo_screenheight()] # размер экрана
 window.geometry(f"{screen_size[0]//3}x{screen_size[1]//3}") # окно на треть экрана
 
 # Чтобы поля были распределены по экрану

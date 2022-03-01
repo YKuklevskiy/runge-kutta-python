@@ -4,6 +4,7 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 import csv
+import solution_table
 
 # Вариант-18
 def function_18(x, y):
@@ -84,6 +85,8 @@ def save_table(data: List[List[float]]):
     table_writer.writerow(column_names)
     table_writer.writerows(data)
     table_file.close()
+    
+    solution_table.open_table() # открываем окно, загружающее таблицу из файла и показывающее её
 
 
 def print_table_console(data: List[List[float]]):
