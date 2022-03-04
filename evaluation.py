@@ -6,16 +6,24 @@ import matplotlib.pyplot as plt
 import csv
 import solution_table
 
-# Вариант-18
+# Функция варианта-18
 def function_18(x, y):
     #f(x,y) = y/x + 1/ln|x|
     return float(y)/x + 1/math.log(abs(x))
 
-# Аналитическое решение заданного уравнения
-def analytic_solution(x: float, x_0: float, y_0: float) -> float:
+# Аналитическое решение заданного вариантом уравнения
+def analytic_solution_18(x: float, x_0: float, y_0: float) -> float:
     # y = x*ln(ln(|x|))+C*x
     C = float(y_0)/x_0 - math.log(math.log(abs(x_0))) # находим С, удовл. нач. условию
     return float(x)*math.log(math.log(abs(x)))+C*x
+
+
+# в этих функциях вы выбираете, какие именно функции будут использоваться в программе. То есть, если вы хотите решить 
+# другие уравнения, измените функции которые вызываются в return.
+def rgkt_sol(x, y):
+    return function_18(x, y)
+def analytic_sol(x, x_0, y_0):
+    return analytic_solution_18(x, x_0, y_0)
 
 
 # функция вычисляющая таблицу всех значений, требующихся в задаче и возвращающая ее
@@ -30,10 +38,10 @@ def evaluate(x_0: float, x_n: float, y_0: float, h: float, eps = -1) -> List[Lis
     try:
         while x_i < x_n and not math.isclose(x_i, x_n):
             temp_h = h
-            approximated_y = rgkt.calculate_next_y(x_i, y[-1], h, function_18)
+            approximated_y = rgkt.calculate_next_y(x_i, y[-1], h, rgkt_sol)
             if eps != -1: # разбиение сетки может быть неравномерным, считаем до введенной точности
                 while True:
-                    temp_y = rgkt.calculate_next_y(x_i, y[-1], temp_h/2, function_18)
+                    temp_y = rgkt.calculate_next_y(x_i, y[-1], temp_h/2, rgkt_sol)
                     rule_met = abs(approximated_y-temp_y)/15.0 < eps
 
                     approximated_y = temp_y
@@ -42,7 +50,7 @@ def evaluate(x_0: float, x_n: float, y_0: float, h: float, eps = -1) -> List[Lis
                         break
             
             x_i += temp_h
-            real_y = analytic_solution(x_i, x_0, y_0)
+            real_y = analytic_sol(x_i, x_0, y_0)
             y.append(approximated_y)
             x.append(x_i)
             precise_y.append(real_y)
@@ -52,7 +60,7 @@ def evaluate(x_0: float, x_n: float, y_0: float, h: float, eps = -1) -> List[Lis
     
     return [x, y, precise_y, delta]
 
-def plot_window(data: List[List[float]]):
+def plot_window(data: List[List[float]], analytic: bool):
     plt.close('all') # закрываем ранее открытые графики
 
     x_range = np.array(data[0], np.float64)
@@ -65,7 +73,10 @@ def plot_window(data: List[List[float]]):
     plt.ylabel("y(x)")
     plt.grid()
     plt.plot(x_range, y_values)
-    plt.plot(x_range, y_precise_values)
+
+    if analytic: # если рисуем аналитическое решение
+        plt.plot(x_range, y_precise_values)
+
     plt.scatter(x_range, y_values, s=4) # для точек в месте вычисленных значений
     save_table(data)
     plt.show()

@@ -9,7 +9,7 @@ screen_size = [window.winfo_screenwidth(), window.winfo_screenheight()] # раз
 window.geometry(f"{screen_size[0]//3}x{screen_size[1]//3}") # окно на треть экрана
 
 # Чтобы поля были распределены по экрану
-for i in range(0, 4):
+for i in range(0, 5):
     window.grid_rowconfigure(i, weight=1)
 for i in range(0, 2):
     window.grid_columnconfigure(i, weight=1)
@@ -57,6 +57,12 @@ step_entry.insert(END, "0.1") # исходное значение в моем в
 step_label.grid(column=0, row=0)
 step_entry.grid(column=0, row=1)
 
+
+# аналитическое решение
+analytic_bool = BooleanVar()
+analytic_bool.set(1)
+analytic_check = Checkbutton(window, text="Рисовать на графике аналитическое решение?",
+                 variable=analytic_bool, onvalue=1, offvalue=0)
 
 # точность
 precision_frame = Frame(window)
@@ -106,7 +112,7 @@ def plot():
 
     calculated_data = evaluation.evaluate(*list(map(float, params))) # делаем расчеты
     if calculated_data != None:
-        evaluation.plot_window(calculated_data)
+        evaluation.plot_window(calculated_data, analytic_bool.get())
     else:
         messagebox.showerror("Ошибка", "Ошибка в вычислениях. Пожалуйста, проверьте вводные данные на корректность.")
     
@@ -119,7 +125,8 @@ x_0_frame.grid(column=0, row=0)
 x_n_frame.grid(column=1, row=0)
 y_0_frame.grid(column=0, row=1)
 step_frame.grid(column=1, row=1)
-precision_frame.grid(column=0, row=2, columnspan=2)
-solve_button.grid(column=0, row=3, columnspan=2)
+analytic_check.grid(column=0, row=2, columnspan=2)
+precision_frame.grid(column=0, row=3, columnspan=2)
+solve_button.grid(column=0, row=4, columnspan=2)
 
 window.mainloop()
