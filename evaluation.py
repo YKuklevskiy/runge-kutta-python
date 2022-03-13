@@ -83,12 +83,28 @@ def plot_window(data: List[List[float]], analytic: bool):
 
 def save_table(data: List[List[float]]):
     preciseness_data = data[3] # потом припишем погрешность ее к транспонированному массиву с округленными данными
+    entries_count = len(preciseness_data)
     data.pop()
 
     # т.к. data приходит в "горизонтальном, а не вертикальном виде", транспонируем массивы
     values_data = np.array(data).T.round(6)
 
     data = np.concatenate((values_data, np.array(preciseness_data).T[:, None]), axis=1).tolist()
+
+    # меняем отображение погрешности на вид _._*10^n по необходимости
+    for i in range(entries_count):
+        str_num = str(data[i][3])
+        if str_num.find("e") == -1:
+            data[i][3] = "{:6f}".format(data[i][3])
+            continue
+        str_num = "{:.1e}".format(data[i][3])
+        print(str_num)
+        print(str_num[str_num.find("e")+1:])
+        exp = int(str_num[str_num.find("e")+1:])
+        str_num = str_num[:str_num.find("e")] + f"*10^({exp})"
+        data[i][3] = str_num
+        
+
     column_names = ('xᵢ', 'yᵢ', 'yᵢ полученное аналитически', 'Погрешность численного решения')
 
     table_file = open('solution.csv', mode='w', newline='', encoding="utf-8")
