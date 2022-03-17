@@ -19,9 +19,9 @@ def open_table():
     column_names = next(table_reader) # считали заголовки
 
     # создаем таблицу и заполняем заголовки
-    value_table = Treeview(table_window, show="headings", columns=(f"#{i+1}" for i in range(len(column_names))))
+    value_table = Treeview(table_window, show="headings", columns=tuple(column_names))
     for i in range(len(column_names)):
-        value_table.column(f"#{i+1}", anchor=E)
+        value_table.column(f"#{i+1}", anchor=CENTER) #anchor=E is a variant
         value_table.heading(f"#{i+1}", text=column_names[i])
 
     # заполняем данные

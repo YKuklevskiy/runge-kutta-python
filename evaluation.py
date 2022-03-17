@@ -34,22 +34,29 @@ def evaluate(x_0: float, x_n: float, y_0: float, h: float, eps = -1) -> List[Lis
     precise_y = [y_0]
     delta = [0]
     x_i = x_0
-    
+    last_y_i = y_0 # последнее вычисленное численно значение функции
+
     try:
         while x_i < x_n and not math.isclose(x_i, x_n):
             temp_h = h
-            approximated_y = rgkt.calculate_next_y(x_i, y[-1], h, rgkt_sol)
+            approximated_y = rgkt.calculate_next_y(x_i, last_y_i, h, rgkt_sol)
             if eps != -1: # разбиение сетки может быть неравномерным, считаем до введенной точности
                 while True:
-                    temp_y = rgkt.calculate_next_y(x_i, y[-1], temp_h/2, rgkt_sol)
+                    temp_y = rgkt.calculate_next_y(x_i, last_y_i, temp_h/2, rgkt_sol)
                     rule_met = abs(approximated_y-temp_y)/15.0 < eps
 
                     approximated_y = temp_y
                     temp_h = temp_h/2
                     if rule_met:
                         break
-            
+            last_y_i = approximated_y
+
             x_i += temp_h
+
+            # ограничение, для уменьшения количества записей в таблице, если вычисляются очень близкие значения функции 
+            if x_i-x[-1] < 0.01 and not math.isclose(x_i, x_n): 
+                continue
+
             real_y = analytic_sol(x_i, x_0, y_0)
             y.append(approximated_y)
             x.append(x_i)
@@ -75,10 +82,11 @@ def plot_window(data: List[List[float]], analytic: bool):
     plt.plot(x_range, y_values)
 
     if analytic: # если рисуем аналитическое решение
-        plt.plot(x_range, y_precise_values)
+        plt.plot(x_range, y_precise_values, label='Аналитическое решение')
 
-    plt.scatter(x_range, y_values, s=4) # для точек в месте вычисленных значений
+    plt.scatter(x_range, y_values, s=5, label='Численное решение', zorder=3) # для точек в месте вычисленных значений
     save_table(data)
+    plt.legend()
     plt.show()
 
 def save_table(data: List[List[float]]):
@@ -91,21 +99,27 @@ def save_table(data: List[List[float]]):
 
     data = np.concatenate((values_data, np.array(preciseness_data).T[:, None]), axis=1).tolist()
 
-    # меняем отображение погрешности на вид _._*10^n по необходимости
     for i in range(entries_count):
-        str_num = str(data[i][3])
-        if str_num.find("e") == -1:
-            data[i][3] = "{:6f}".format(data[i][3])
+        if str(data[i][3]).find("e") > 7:
+            data[i][3] = "{:.3e}".format(data[i][3])
             continue
-        str_num = "{:.1e}".format(data[i][3])
-        print(str_num)
-        print(str_num[str_num.find("e")+1:])
-        exp = int(str_num[str_num.find("e")+1:])
-        str_num = str_num[:str_num.find("e")] + f"*10^({exp})"
-        data[i][3] = str_num
+        data[i][3] = "{:6f}".format(data[i][3])
+
+    # меняем отображение погрешности на вид _._*10^n по необходимости
+    # for i in range(entries_count):
+    #     str_num = str(data[i][3])
+    #     if str_num.find("e") == -1:
+    #         data[i][3] = "{:6f}".format(data[i][3])
+    #         continue
+    #     str_num = "{:.1e}".format(data[i][3])
+    #     print(str_num)
+    #     print(str_num[str_num.find("e")+1:])
+    #     exp = int(str_num[str_num.find("e")+1:])
+    #     str_num = str_num[:str_num.find("e")] + f"*10^({exp})"
+    #     data[i][3] = str_num
         
 
-    column_names = ('xᵢ', 'yᵢ', 'yᵢ полученное аналитически', 'Погрешность численного решения')
+    column_names = ('xᵢ', 'Числ. решение', 'Аналитич. решение', 'Погрешность')
 
     table_file = open('solution.csv', mode='w', newline='', encoding="utf-8")
     table_writer = csv.writer(table_file, delimiter=',', quotechar = '"')
